@@ -10,10 +10,13 @@
 #include <streamer>
 
 #include "source\macros\defines"
+#include "source\macros\dialogs"
 #include "source\enum\player"
 #include "source\vars"
 #include "source\arrays"
+#include "source\basic_functions"
 #include "source\main_publics"
+#include "source\player_publics"
 
 
 main()
@@ -22,7 +25,6 @@ main()
 	print(" Drift Gamemode by Magicznyy");
 	print("----------------------------------\n");
 }
-
 
 
 public OnPlayerEnterCheckpoint(playerid)
@@ -96,10 +98,6 @@ public OnVehicleStreamOut(vehicleid, forplayerid)
 	return 1;
 }
 
-public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
-{
-	return 1;
-}
 
 public OnPlayerClickPlayer(playerid, clickedplayerid, source)
 {

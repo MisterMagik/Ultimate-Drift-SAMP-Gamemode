@@ -3,6 +3,37 @@
 
 public OnPlayerRequestClass(playerid, classid)
 {
+    SpawnPlayer(playerid);
+    TogglePlayerSpectating(playerid, 1);
+    
+    queryStr[0] = EOS;
+	format(queryStr, sizeof(queryStr), "SELECT `pName` FROM `accounts` WHERE `pName` = '%s'", pVars[playerid][pName]);
+	mysql_query(queryStr);
+	
+	mysql_store_result();
+	
+    if(mysql_num_rows() > 0) 
+    {
+        mysql_free_result();
+
+        mainStr[0] = EOS;
+        format(mainStr, sizeof(mainStr), "{00FF00}Witaj na serwerze Drift! Znalezlismy juz konto %s zarejestrowane na serwerze! Wpisz haslo", pVars[playerid][pName]);
+        ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Logowanie", mainStr, "Zaloguj", "Wyjdz");
+        
+        
+
+
+    } else 
+    {
+        mysql_free_result();
+
+        mainStr[0] = EOS;
+        format(mainStr, sizeof(mainStr), "{00FF00}Witaj na serwerze Drift! Nie znalezlismy konta o nicku %s. Musisz utworzyc nowe konto, wpisz haslo", pVars[playerid][pName]);
+        ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_PASSWORD, "Rejestracja", mainStr, "Zarejestruj", "Wyjdz");
+    }
+
+    TogglePlayerSpectating(playerid, 0);
+    SpawnPlayer(playerid);
 	SetPlayerPos(playerid, 1958.3783, 1343.1572, 15.3746);
 	SetPlayerCameraPos(playerid, 1958.3783, 1343.1572, 15.3746);
 	SetPlayerCameraLookAt(playerid, 1958.3783, 1343.1572, 15.3746);
@@ -11,17 +42,18 @@ public OnPlayerRequestClass(playerid, classid)
 
 public OnPlayerConnect(playerid)
 {
-    isLogged[playerid] = false;
+    hasLogged[playerid] = false;
     isSpawned[playerid] = false;
     isDriftModeEnabled[playerid] = false;
 
+    format(pVars[playerid][pName], 24, "%s", GetPlayerNick(playerid));
+
     // ..
-
+    
     mainStr[0] = EOS;
-    format(mainStr, sizeof(mainStr), "%s dolaczyl do serwera, witamy!");
+    
+    format(mainStr, sizeof(mainStr), "%s dolaczyl do serwera, witamy!", pVars[playerid][pName]);
     SendClientMessageToAll(0xFFFFFF, mainStr);
-
-
 
 	return 1;
 }
@@ -116,6 +148,48 @@ public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid)
 
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
+	return 1;
+}
+
+public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+{
+    switch(dialogid)
+    {
+        case DIALOG_REGISTER:
+        {
+            if(response) 
+            {
+                format(pVars[playerid][pPassword], 255, "%s", inputtext);
+                pVars[playerid][pSkinId] = BASIC_SKIN;
+                pVars[playerid][pMoney] = 10000;
+                pVars[playerid][pScore] = 0;
+                pVars[playerid][pRank] = PLAYER_RANK;
+
+                queryStr[0] = EOS;
+                format(queryStr, sizeof(queryStr), "INSERT INTO accounts (`pId`, `pName`, `pPassword`, `pSkinId`, `pMoney`, `pScore`, `pRank`) VALUES ('NULL', '%s', '%s', '%d', '%d', '%d', '%d')", pVars[playerid][pName], pVars[playerid][pPassword], pVars[playerid][pSkinId], pVars[playerid][pMoney], pVars[playerid][pScore], pVars[playerid][pRank]);
+                mysql_query(queryStr);
+
+
+
+            } else 
+            {
+                Kick(playerid);
+            }
+            mainStr[0] = EOS;
+            
+        }
+
+        case DIALOG_LOGIN:
+        {
+            if(response) 
+            {
+
+            } else 
+            {
+                Kick(playerid);
+            }
+        }
+    }
 	return 1;
 }
 

@@ -9,10 +9,10 @@
 
 //MYSQL
 
-#define MYSQL_HOST "127.0.0.1"
-#define MYSQL_USER "root"
-#define MYSQL_PASSWORD ""
-#define MYSQL_DB_NAME "driftserver"
+#define MYSQL_HOST "localhost"
+#define MYSQL_USER "rot"
+#define MYSQL_PASSWORD "rot"
+#define MYSQL_DB_NAME "drift_server"
 
 //Ranks
 
@@ -23,6 +23,10 @@
 #define FRIEND_RANK 1
 #define PLAYER_RANK 0
 #define BANNED_PLAYER -1
+
+// BASIC
+
+#define BASIC_SKIN 55
 
 
 

@@ -7,5 +7,6 @@ new pVars[MAX_PLAYERS][PlayerData];
 //text
 new mainStr[1024];
 new queryStr[1024];
+new tmpStr[64];
 
 #endif
