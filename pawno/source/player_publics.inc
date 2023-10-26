@@ -17,8 +17,10 @@ public OnPlayerRequestClass(playerid, classid)
         mysql_free_result();
 
         mainStr[0] = EOS;
+        tmpStr[0] = EOS;
+        format(tmpStr, sizeof(tmpStr), "[%i/3] Logowanie", loginAttempt[playerid]);
         format(mainStr, sizeof(mainStr), "{00FF00}Witaj na serwerze Drift! Znalezlismy juz konto %s zarejestrowane na serwerze! Wpisz haslo", pVars[playerid][pName]);
-        ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Logowanie", mainStr, "Zaloguj", "Wyjdz");
+        ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, tmpStr, mainStr, "Zaloguj", "Wyjdz");
         
         
 
@@ -42,6 +44,7 @@ public OnPlayerRequestClass(playerid, classid)
 
 public OnPlayerConnect(playerid)
 {
+    loginAttempt[playerid] = 0;
     hasLogged[playerid] = false;
     isSpawned[playerid] = false;
     isDriftModeEnabled[playerid] = false;
@@ -60,6 +63,7 @@ public OnPlayerConnect(playerid)
 
 public OnPlayerDisconnect(playerid, reason)
 {
+    clearPlayerData(playerid);
 	return 1;
 }
 
@@ -169,7 +173,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                 format(queryStr, sizeof(queryStr), "INSERT INTO accounts (`pId`, `pName`, `pPassword`, `pSkinId`, `pMoney`, `pScore`, `pRank`) VALUES ('NULL', '%s', '%s', '%d', '%d', '%d', '%d')", pVars[playerid][pName], pVars[playerid][pPassword], pVars[playerid][pSkinId], pVars[playerid][pMoney], pVars[playerid][pScore], pVars[playerid][pRank]);
                 mysql_query(queryStr);
 
-
+                SpawnPlayer(playerid);
 
             } else 
             {
@@ -181,13 +185,50 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
         case DIALOG_LOGIN:
         {
-            if(response) 
-            {
-
-            } else 
+            if(loginAttempt[playerid] == 3)
             {
                 Kick(playerid);
+            } else 
+            {
+                if(response) 
+                {
+                    queryStr[0] = EOS;
+	                format(queryStr, sizeof(queryStr), "SELECT `pPassword` FROM `accounts` WHERE `pName` = '%s'", pVars[playerid][pName]);
+                    mysql_query(queryStr);
+
+                    mysql_store_result();
+
+                    mysql_fetch_row(queryStr, "|");
+                    sscanf(queryStr, "p<|>s[255]", pVars[playerid][pPassword]);
+
+                    mysql_free_result();
+
+                    if(strcmp(inputtext, pVars[playerid][pPassword]) == 0)
+                    {
+                        loginAttempt[playerid] = 0;
+                        mainStr[0] = EOS;
+                        format(mainStr, sizeof(mainStr), "Zalogowano na konto %s [ID:%i]!", pVars[playerid][pName], playerid);
+                        SendClientMessage(playerid, 0x0F0F0F, mainStr);   
+                        TogglePlayerSpectating(playerid, 0);
+                        SpawnPlayer(playerid);
+                    } else 
+                    {
+                        loginAttempt[playerid]++;
+                        mainStr[0] = EOS;
+                        tmpStr[0] = EOS;
+                        format(tmpStr, sizeof(tmpStr), "[%i/3] Logowanie", loginAttempt[playerid]);
+                        format(mainStr, sizeof(mainStr), "{00FF00}Witaj na serwerze Drift! Znalezlismy juz konto %s zarejestrowane na serwerze! Wpisz haslo", pVars[playerid][pName]);
+                        ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, tmpStr, mainStr, "Zaloguj", "Wyjdz");
+        
+                    }
+
+                } else 
+                {
+                    Kick(playerid);
+                }    
             }
+
+           
         }
     }
 	return 1;

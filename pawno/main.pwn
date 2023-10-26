@@ -17,7 +17,8 @@
 #include "source\basic_functions"
 #include "source\main_publics"
 #include "source\player_publics"
-
+#include "source\player_functions"
+#include "source\command\player_commands"
 
 main()
 {
