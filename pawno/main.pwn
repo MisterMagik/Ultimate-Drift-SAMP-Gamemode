@@ -12,6 +12,7 @@
 #include "source\macros\defines"
 #include "source\macros\dialogs"
 #include "source\enum\player"
+#include "source\enum\vehicle"
 #include "source\vars"
 #include "source\arrays"
 #include "source\basic_functions"
@@ -19,6 +20,7 @@
 #include "source\player_publics"
 #include "source\player_functions"
 #include "source\command\player_commands"
+#include "source\command\admin_commands"
 
 main()
 {

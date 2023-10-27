@@ -12,6 +12,7 @@ new bool:isSpawned[MAX_PLAYERS];
 new bool:isFreezed[MAX_PLAYERS];
 new bool:isBlockedChat[MAX_PLAYERS];
 new bool:isDriftModeEnabled[MAX_PLAYERS];
+new bool:canRelog[MAX_PLAYERS];
 
 
 #endif

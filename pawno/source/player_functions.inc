@@ -12,6 +12,7 @@ stock clearPlayerData(playerid)
 
     loginAttempt[playerid] = 0;
     hasLogged[playerid] = false;
+    canRelog[playerid] = false;
     return 1;
 }
 

@@ -3,6 +3,7 @@
 
 
 new pVars[MAX_PLAYERS][PlayerData];
+new vVars[MAX_VEHICLES][VehicleData];
 
 //text
 new mainStr[1024];

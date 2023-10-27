@@ -152,6 +152,14 @@ public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid)
 
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
+    new vehicleid = GetPlayerVehicleID(playerid);
+    if(PRESSED(KEY_FIRE)) 
+    {
+        if(GetPlayerState(playerid) == PLAYER_STATE_DRIVER)
+        {
+            
+        }
+    }
 	return 1;
 }
 
@@ -168,6 +176,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                 pVars[playerid][pMoney] = 10000;
                 pVars[playerid][pScore] = 0;
                 pVars[playerid][pRank] = PLAYER_RANK;
+                canRelog[playerid] = true;
 
                 queryStr[0] = EOS;
                 format(queryStr, sizeof(queryStr), "INSERT INTO accounts (`pId`, `pName`, `pPassword`, `pSkinId`, `pMoney`, `pScore`, `pRank`) VALUES ('NULL', '%s', '%s', '%d', '%d', '%d', '%d')", pVars[playerid][pName], pVars[playerid][pPassword], pVars[playerid][pSkinId], pVars[playerid][pMoney], pVars[playerid][pScore], pVars[playerid][pRank]);
@@ -209,17 +218,27 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
                         mainStr[0] = EOS;
                         format(mainStr, sizeof(mainStr), "Zalogowano na konto %s [ID:%i]!", pVars[playerid][pName], playerid);
                         SendClientMessage(playerid, 0x0F0F0F, mainStr);   
+                        canRelog[playerid] = true;
+                        queryStr[0] = EOS;
+                        format(queryStr, sizeof(queryStr), "SELECT pId, pSkinId, pMoney, pScore, pRank FROM accounts WHERE pName = '%s'", pVars[playerid][pName]);
+                        mysql_query(queryStr);
+                        mysql_store_result();
+                        mysql_fetch_row(queryStr, "|");
+                        sscanf(queryStr, "p<|>iiiii", pVars[playerid][pId], pVars[playerid][pSkinId], pVars[playerid][pMoney], pVars[playerid][pScore], pVars[playerid][pRank]);
+
+                        mysql_free_result();
                         TogglePlayerSpectating(playerid, 0);
                         SpawnPlayer(playerid);
                     } else 
                     {
                         loginAttempt[playerid]++;
+                        canRelog[playerid] = false;
                         mainStr[0] = EOS;
                         tmpStr[0] = EOS;
                         format(tmpStr, sizeof(tmpStr), "[%i/3] Logowanie", loginAttempt[playerid]);
                         format(mainStr, sizeof(mainStr), "{00FF00}Witaj na serwerze Drift! Znalezlismy juz konto %s zarejestrowane na serwerze! Wpisz haslo", pVars[playerid][pName]);
                         ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, tmpStr, mainStr, "Zaloguj", "Wyjdz");
-        
+
                     }
 
                 } else 

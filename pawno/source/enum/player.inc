@@ -9,7 +9,12 @@ enum PlayerData
     pSkinId,
     pMoney,
     pScore,
-    pRank
+    pRank,
+    Float: pX,
+    Float: pY,
+    Float: pZ,
+    Float: pHealth,
+    Float: pArmour
 }
 
 #endif
